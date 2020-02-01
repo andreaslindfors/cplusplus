@@ -18,14 +18,22 @@ void callback(const std::string& data)
 }
 
 void do_add(int i){
-    while(1){
-        cout << "Attempting to + 1 in task " << i << ".\n";
+    int limit = 20000;
+    while(x < limit){
+        cout << "Task: " << i << ". Attempting to + 1.\n";
         mtx.lock();
-        x += 1;
-        std::ostringstream oss;
-        oss << "x is " << x << " after + 1. I am loop " << std::to_string(i) + ".\n";
-        cout << oss.str();
-        mtx.unlock();
+        if(x < limit)
+        {
+            x += 1;
+            std::ostringstream oss;
+            oss << "Task: " << i << ". x is " << x << " after + 1.\n";
+            cout << oss.str();
+            mtx.unlock();
+        } else 
+        {
+            mtx.unlock();
+        }
+        
         }
         callback("async task done");
 }
@@ -40,6 +48,6 @@ int main()
         cout << "Async task " << i << " launched.\n";
     }
     for (auto& th : threads) th.join();
-    cout << "Main finished executing.\n";
+    cout << "Main finished executing. x is " << x << ".\n";
     return 0;
 }
